@@ -1,23 +1,34 @@
-import React, { useEffect } from "react";
-import dashjs from "dashjs";
+import React from "react";
+import Login from "./pages/login/Login";
+import Register from "./pages/register/Register";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+
 import "./App.css";
 
-const API_URL = process.env.REACT_APP_API_URL;
-
 function App() {
-  useEffect(() => {
-    let url = API_URL + "/stream-video/";
-    let player = dashjs.MediaPlayer().create();
-    player.initialize(document.querySelector("#videoPlayer"), url, true);
-  }, []);
-
   return (
-    <div className="App">
-      <header className="App-header">
-        <p>On Demand Video Streaming Project</p>
-        <video id="videoPlayer" controls></video>
-      </header>
-    </div>
+    <Router>
+      <Routes>
+        <Route
+          exact
+          path="/login"
+          // element={user ? <Navigate to="/" replace /> : <Login />}
+          element={<Login />}
+        />
+
+        <Route
+          exact
+          path="/register"
+          // element={user ? <Navigate to="/" replace /> : <Register />}
+          element={<Register />}
+        />
+      </Routes>
+    </Router>
   );
 }
 
