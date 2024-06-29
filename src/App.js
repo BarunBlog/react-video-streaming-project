@@ -1,6 +1,7 @@
 import React from 'react';
 import Login from './pages/login/Login';
 import Register from './pages/register/Register';
+import Home from './pages/home/Home';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
 import { useContext } from 'react';
@@ -28,6 +29,14 @@ function App() {
             path="/register"
             // element={user ? <Navigate to="/" replace /> : <Register />}
             element={<Register />}
+          />
+          <Route
+            path="/"
+            element={
+              <PrivateRoute>
+                <Home />
+              </PrivateRoute>
+            }
           />
         </Routes>
       </Router>

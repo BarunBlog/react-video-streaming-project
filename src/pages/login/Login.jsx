@@ -64,7 +64,7 @@ const Login = () => {
           <br />
 
           <p>
-            <a href="#">Go to Home</a>
+            Go to <Link to="/">Home</Link>
           </p>
         </section>
       ) : (

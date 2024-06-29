@@ -22,7 +22,7 @@ const Register = () => {
 
   const [email, setEmail] = useState('');
   const [validEmail, setValidEmail] = useState(false);
-  const [emailFocus, setEmailFocus] = useState(false);
+  // const [emailFocus, setEmailFocus] = useState(false);
 
   const [password, setPassword] = useState('');
   const [validPassword, setValidPassword] = useState(false);
@@ -166,8 +166,8 @@ const Register = () => {
                 required
                 aria-invalid={validEmail ? 'false' : 'true'}
                 aria-describedby="emailnote"
-                onFocus={() => setEmailFocus(true)}
-                onBlur={() => setEmailFocus(false)}
+                // onFocus={() => setEmailFocus(true)}
+                // onBlur={() => setEmailFocus(false)}
               />
 
               <label htmlFor="password">
