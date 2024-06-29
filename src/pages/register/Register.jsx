@@ -4,7 +4,9 @@ import { FaInfoCircle } from 'react-icons/fa';
 import { FaCheck } from 'react-icons/fa';
 import { FaTimes } from 'react-icons/fa';
 import '../auth/auth.css';
-import axios from 'axios';
+import axios from '../../api/axios';
+
+const REGISTRATION_URL = '/user/register/';
 
 const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
@@ -28,8 +30,6 @@ const Register = () => {
 
   const [errMessage, setErrMessage] = useState('');
   const [success, setSuccess] = useState(false);
-
-  const API_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     userRef.current.focus();
@@ -69,7 +69,7 @@ const Register = () => {
 
     try {
       const response = await axios.post(
-        API_URL + '/user/register/',
+        REGISTRATION_URL,
         JSON.stringify({ username: username, email: email, password: password }),
         {
           headers: { 'Content-Type': 'application/json' },
