@@ -1,3 +1,7 @@
+body {
+  background: var(--color-primary);
+}
+
 section {
   height: auto;
 }
@@ -19,13 +23,13 @@ section {
 }
 
 .shape:first-child {
-  background: linear-gradient(#1845ad, #23a2f6);
+  background: linear-gradient(var(--color-secondary-one), var(--color-secondary-one-variant));
   left: -140px;
   top: -120px;
 }
 
 .shape:last-child {
-  background: linear-gradient(to right, #ff512f, #f09819);
+  background: linear-gradient(to right, var(--color-secondary-two), var(--color-secondary-two-variant));
   right: -140px;
   bottom: -120px;
 }
@@ -54,7 +58,7 @@ form * {
   border: none;
 }
 form a {
-  color: var(--color-primary);
+  color: var(--color-secondary-one);
 }
 
 form h3 {
