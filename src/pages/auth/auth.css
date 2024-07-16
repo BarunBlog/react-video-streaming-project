@@ -1,9 +1,6 @@
-body {
-  background: var(--color-primary);
-}
-
 section {
-  height: auto;
+  height: 100vh;
+  background: var(--color-primary);
 }
 
 .auth-background {
