@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from '../../api/axios';
 import './home.css';
 import moment from 'moment';
+import { FaPlayCircle } from "react-icons/fa";
 
 const VIDEO_LIST_URL = '/stream-video/get-videos';
 
@@ -26,7 +27,12 @@ const Home = () => {
       <div className="videos-grid">
         {videos.map(video => (
           <div key={video.uuid} className="video-card">
-            <img src={video.thumbnail} alt={video.title} className="video-thumbnail" />
+            <div className="thumbnail-container">
+              <img src={video.thumbnail} alt={video.title} className="video-thumbnail" />
+              <div className="play-button">
+                <FaPlayCircle />
+              </div>
+            </div>
             <div className="video-info">
               <p className="video-title">{video.title}</p>
 
