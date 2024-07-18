@@ -19,7 +19,7 @@ const Videos = () => {
     };
 
     fetchVideos();
-  }, [videos]);
+  }, []);
 
   return (
     <div className="home-container">
