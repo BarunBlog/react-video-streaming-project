@@ -8,17 +8,17 @@ import './video-details.css';
 const API_URL = process.env.REACT_APP_API_URL;
 
 const VIDEO_DETAILS_URL = '/stream-video/get-videos/';
-const VIDEO_STREAM_URL = API_URL + '/stream-video/stream/';
+const VIDEO_STREAM_URL = '/stream-video/stream/';
 
 const VideoDetails = () => {
   const { videoUuid } = useParams();
   const [video, setVideo] = useState(null);
+  const playerRef = React.useRef(null);
 
   useEffect(() => {
     const fetchVideoDetails = async () => {
       try {
         const response = await axios.get(`${VIDEO_DETAILS_URL}${videoUuid}`);
-
         setVideo(response.data);
       } catch (err) {
         console.error('Error fetching video details:', err);
@@ -29,19 +29,27 @@ const VideoDetails = () => {
   }, [videoUuid]);
 
   useEffect(() => {
-    const streamVideo = async () => {
-      const url = VIDEO_STREAM_URL + videoUuid;
+    if (video) {
+      const url = `${API_URL}${VIDEO_STREAM_URL}${videoUuid}`;
 
-      try {
-        const player = dashjs.MediaPlayer().create();
-        player.initialize(document.querySelector('#videoPlayer'), url, true);
-      } catch (err) {
-        console.error('Error streaming the video:', err);
+      // Reset the player if it already exists
+      if (playerRef.current) {
+        playerRef.current.reset();
+      }
+
+      // Create and initialize a new Dash.js player
+      const player = dashjs.MediaPlayer().create();
+      playerRef.current = player;
+      player.initialize(document.querySelector('#videoPlayer'), url, true);
+    }
+
+    // Cleanup function to reset the player when the component unmounts or videoUuid changes
+    return () => {
+      if (playerRef.current) {
+        playerRef.current.reset();
       }
     };
-
-    streamVideo();
-  }, [videoUuid, video]);
+  }, [video, videoUuid]);
 
   if (!video) {
     return <div>Loading...</div>;
