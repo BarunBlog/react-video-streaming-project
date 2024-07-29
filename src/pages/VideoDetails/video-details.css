@@ -1,0 +1,32 @@
+.video-details-container {
+  width: var(--container-width-lg);
+  margin: 0 auto;
+  padding: 20px;
+  color: var(--color-primary);
+}
+
+.video-player {
+  margin-bottom: 20px;
+}
+
+video {
+  width: 100%;
+  height: auto;
+}
+
+.video-details-info {
+  padding: 10px;
+}
+
+.video-details-title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.video-details-author,
+.video-details-time,
+.video-details-description {
+  font-size: 1rem;
+  margin: 5px 0;
+}
