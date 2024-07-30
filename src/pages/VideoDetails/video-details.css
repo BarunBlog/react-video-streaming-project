@@ -1,12 +1,13 @@
 .video-details-container {
   width: var(--container-width-lg);
   margin: 0 auto;
-  padding: 20px;
+  margin-top: 50px;
   color: var(--color-primary);
 }
 
 .video-player {
   margin-bottom: 20px;
+  max-width: 900px;
 }
 
 video {
@@ -15,13 +16,18 @@ video {
 }
 
 .video-details-info {
-  padding: 10px;
+  padding: 10px 0;
 }
 
 .video-details-title {
   font-size: 2rem;
   font-weight: bold;
   margin-bottom: 10px;
+}
+
+.video-details-author-info {
+  display: flex;
+  gap: 20px;
 }
 
 .video-details-author,
