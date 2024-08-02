@@ -31,7 +31,9 @@ const Navbar = () => {
 
   return (
     <nav className="navbar">
-      <div className="navbar-logo">VidiZone</div>
+      <div className="navbar-logo">
+        <Link to={`/`}>VidiZone</Link>
+      </div>
       <div className="navbar-search">
         <input type="text" placeholder="Search" className="navbar-search-input" />
         <button className="navbar-search-button">

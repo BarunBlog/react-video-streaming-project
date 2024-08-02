@@ -13,6 +13,10 @@
   font-weight: bold;
 }
 
+.navbar-logo a {
+  color: var(--color-white);
+}
+
 .navbar-search {
   display: grid;
   align-items: center;
@@ -71,6 +75,7 @@
   margin-top: 5px;
   list-style: none;
   padding: 10px 0;
+  z-index: 100;
 }
 
 .navbar-dropdown-menu li {
