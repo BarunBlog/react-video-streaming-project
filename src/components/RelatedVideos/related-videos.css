@@ -1,0 +1,36 @@
+.sidebar {
+  padding: 10px;
+}
+
+.sidebar h2 {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.related-video {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.related-video img {
+  width: 100px;
+  height: 60px;
+  margin-right: 10px;
+  border-radius: 5px;
+}
+
+.related-video-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.related-video-title {
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.related-video-author {
+  font-size: 0.875rem;
+  color: gray;
+}

@@ -4,6 +4,7 @@ import axios from '../../api/axios';
 import moment from 'moment';
 import dashjs from 'dashjs';
 import Navbar from '../../components/Navbar/Navbar';
+import RelatedVideos from '../../components/RelatedVideos/RelatedVideos';
 import './video-details.css';
 
 const API_URL = process.env.REACT_APP_API_URL;
@@ -61,19 +62,23 @@ const VideoDetails = () => {
       <Navbar />
 
       <div className="video-details-container">
-        <div className="video-player">
-          <video id="videoPlayer" controls></video>
-        </div>
-        <div className="video-details-info">
-          <h1 className="video-details-title">{video.title}</h1>
-
-          <div className="video-details-author-info">
-            <p className="video-details-author">Uploaded by {video.author_name}</p>
-            <p className="video-details-time">{moment(video.created_at).fromNow()}</p>
+        <div className="main-content">
+          <div className="video-player">
+            <video id="videoPlayer" controls></video>
           </div>
+          <div className="video-details-info">
+            <h1 className="video-details-title">{video.title}</h1>
 
-          <p className="video-details-description">{video.description}</p>
+            <div className="video-details-author-info">
+              <p className="video-details-author">Uploaded by {video.author_name}</p>
+              <p className="video-details-time">{moment(video.created_at).fromNow()}</p>
+            </div>
+
+            <p className="video-details-description">{video.description}</p>
+          </div>
         </div>
+
+        <RelatedVideos category={video.category} />
       </div>
     </>
   );

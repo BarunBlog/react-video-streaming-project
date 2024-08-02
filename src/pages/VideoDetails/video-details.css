@@ -1,8 +1,14 @@
 .video-details-container {
+  display: flex;
   width: var(--container-width-lg);
   margin: 0 auto;
   margin-top: 50px;
   color: var(--color-primary);
+}
+
+.main-content {
+  flex: 3;
+  margin-right: 20px;
 }
 
 .video-player {
