@@ -1,13 +1,17 @@
-import React, { useState, useRef, useEffect, useContext } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useRef, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import '../auth/auth.css';
-import AuthContext from '../../context/AuthProvider';
+import useAuth from '../../hooks/useAuth';
 import axios from '../../api/axios';
 
 const LOGIN_URL = '/user/login/';
 
 const Login = () => {
-  const { login } = useContext(AuthContext);
+  const { login } = useAuth();
+
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || '/';
 
   const userRef = useRef();
   const errRef = useRef();
@@ -15,7 +19,6 @@ const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [errMessage, setErrMessage] = useState('');
-  const [success, setSuccess] = useState(false);
 
   // To set initial focus on the username field
   useEffect(() => {
@@ -41,7 +44,8 @@ const Login = () => {
 
       setUsername('');
       setPassword('');
-      setSuccess(true);
+
+      navigate(from, { replace: true });
     } catch (err) {
       if (!err?.response) {
         setErrMessage('No Server Response');
@@ -56,70 +60,56 @@ const Login = () => {
   };
 
   return (
-    <>
-      {success ? (
-        <section>
-          <h1>You are logged in!</h1>
+    <section>
+      <div className="auth-background">
+        <div className="shape"></div>
+        <div className="shape"></div>
+      </div>
 
-          <br />
+      <form className="auth-form" onSubmit={handleSubmit}>
+        <p ref={errRef} className={errMessage ? 'errmsg' : 'offscreen'} aria-live="assertive">
+          {errMessage}
+        </p>
 
-          <p>
-            Go to <Link to="/">Home</Link>
-          </p>
-        </section>
-      ) : (
-        <section>
-          <div className="auth-background">
-            <div className="shape"></div>
-            <div className="shape"></div>
-          </div>
+        <h3>Login Here</h3>
 
-          <form className="auth-form" onSubmit={handleSubmit}>
-            <p ref={errRef} className={errMessage ? 'errmsg' : 'offscreen'} aria-live="assertive">
-              {errMessage}
-            </p>
+        <label htmlFor="username">Username</label>
+        <input
+          type="text"
+          placeholder="Your Username"
+          id="username"
+          ref={userRef}
+          autoComplete="off"
+          onChange={e => setUsername(e.target.value)}
+          value={username}
+          required
+        />
 
-            <h3>Login Here</h3>
+        <label htmlFor="password">Password</label>
+        <input
+          type="password"
+          placeholder="Your Password"
+          id="password"
+          onChange={e => setPassword(e.target.value)}
+          value={password}
+          required
+        />
 
-            <label htmlFor="username">Username</label>
-            <input
-              type="text"
-              placeholder="Your Username"
-              id="username"
-              ref={userRef}
-              autoComplete="off"
-              onChange={e => setUsername(e.target.value)}
-              value={username}
-              required
-            />
+        <button>Sign In</button>
 
-            <label htmlFor="password">Password</label>
-            <input
-              type="password"
-              placeholder="Your Password"
-              id="password"
-              onChange={e => setPassword(e.target.value)}
-              value={password}
-              required
-            />
+        <div className="social">
+          <div className="go">Google</div>
+          <div className="fb">Facebook</div>
+        </div>
 
-            <button>Sign In</button>
-
-            <div className="social">
-              <div className="go">Google</div>
-              <div className="fb">Facebook</div>
-            </div>
-
-            <br />
-            <p>
-              <span className="line">
-                Need an Account? <Link to="/register">Sign Up</Link>
-              </span>
-            </p>
-          </form>
-        </section>
-      )}
-    </>
+        <br />
+        <p>
+          <span className="line">
+            Need an Account? <Link to="/register">Sign Up</Link>
+          </span>
+        </p>
+      </form>
+    </section>
   );
 };
 
