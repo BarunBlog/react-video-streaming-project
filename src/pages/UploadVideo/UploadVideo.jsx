@@ -43,9 +43,12 @@ const UploadVideo = () => {
     setSuccess(null);
 
     try {
+      const accessToken = localStorage.getItem('accessToken');
+
       const response = await axios.post(UPLOAD_VIDEO_URL, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${accessToken}`,
         },
       });
 
