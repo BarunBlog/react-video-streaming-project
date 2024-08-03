@@ -7,6 +7,7 @@ import './App.css';
 import { useContext } from 'react';
 import AuthContext, { AuthProvider } from './context/AuthProvider';
 import VideoDetails from './pages/VideoDetails/VideoDetails';
+import UploadVideo from './pages/UploadVideo/UploadVideo';
 
 const PrivateRoute = ({ children }) => {
   const { auth } = useContext(AuthContext);
@@ -45,6 +46,15 @@ function App() {
             element={
               <PrivateRoute>
                 <VideoDetails />
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/upload"
+            element={
+              <PrivateRoute>
+                <UploadVideo />
               </PrivateRoute>
             }
           />
