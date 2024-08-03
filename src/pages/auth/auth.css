@@ -30,7 +30,7 @@ section {
   right: -140px;
   bottom: -120px;
 }
-form {
+.auth-form {
   height: auto;
   width: 500px;
   background-color: rgba(255, 255, 255, 0.13);
@@ -47,18 +47,18 @@ form {
   box-shadow: 0 0 40px rgba(8, 7, 16, 0.6);
   padding: 50px 35px;
 }
-form * {
+.auth-form * {
   font-family: 'Poppins', sans-serif;
   color: #ffffff;
   letter-spacing: 0.5px;
   outline: none;
   border: none;
 }
-form a {
+.auth-form a {
   color: var(--color-secondary-one);
 }
 
-form h3 {
+.auth-form h3 {
   font-size: 32px;
   font-weight: 500;
   line-height: 42px;

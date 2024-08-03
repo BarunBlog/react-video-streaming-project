@@ -115,7 +115,7 @@ const Register = () => {
           </div>
 
           <div className="form-container">
-            <form onSubmit={handleSubmit}>
+            <form className='auth-form' onSubmit={handleSubmit}>
               <p ref={errRef} className={errMessage ? 'errmsg' : 'offscreen'} aria-live="assertive">
                 {errMessage}
               </p>

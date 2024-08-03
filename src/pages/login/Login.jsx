@@ -74,7 +74,7 @@ const Login = () => {
             <div className="shape"></div>
           </div>
 
-          <form onSubmit={handleSubmit}>
+          <form className="auth-form" onSubmit={handleSubmit}>
             <p ref={errRef} className={errMessage ? 'errmsg' : 'offscreen'} aria-live="assertive">
               {errMessage}
             </p>
