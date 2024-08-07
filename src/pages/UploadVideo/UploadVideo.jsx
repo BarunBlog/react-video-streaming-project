@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from '../../api/axios';
+import useAxiosPrivate from '../../hooks/useAxiosPrivate';
 import './upload-video.css';
 import Navbar from '../../components/Navbar/Navbar';
 
@@ -14,6 +14,8 @@ const UploadVideo = () => {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+
+  const axiosPrivate = useAxiosPrivate();
 
   const handleVideoFileChange = e => {
     setVideoFile(e.target.files[0]);
@@ -43,12 +45,9 @@ const UploadVideo = () => {
     setSuccess(null);
 
     try {
-      const accessToken = localStorage.getItem('accessToken');
-
-      const response = await axios.post(UPLOAD_VIDEO_URL, formData, {
+      const response = await axiosPrivate.post(UPLOAD_VIDEO_URL, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${accessToken}`,
         },
       });
 
