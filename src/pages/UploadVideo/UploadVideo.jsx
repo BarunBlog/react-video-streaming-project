@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import useAxiosPrivate from '../../hooks/useAxiosPrivate';
 import './upload-video.css';
 import Navbar from '../../components/Navbar/Navbar';
@@ -9,27 +9,22 @@ const UploadVideo = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
-  const [videoFile, setVideoFile] = useState(null);
-  const [thumbnailFile, setThumbnailFile] = useState(null);
+
+  const videoFileRef = useRef(null);
+  const thumbnailFileRef = useRef(null);
+
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
 
   const axiosPrivate = useAxiosPrivate();
 
-  const handleVideoFileChange = e => {
-    setVideoFile(e.target.files[0]);
-  };
-
-  const handleThumbnailFileChange = e => {
-    setThumbnailFile(e.target.files[0]);
-  };
-
   const handleSubmit = async e => {
     e.preventDefault();
 
-    if (!videoFile || !thumbnailFile) {
+    if (!videoFileRef || !thumbnailFileRef) {
       setError('Please select a video and a thumbnail to upload.');
+      setSuccess(null);
       return;
     }
 
@@ -37,8 +32,8 @@ const UploadVideo = () => {
     formData.append('title', title);
     formData.append('description', description);
     formData.append('category', category);
-    formData.append('video', videoFile);
-    formData.append('thumbnail', thumbnailFile);
+    formData.append('video', videoFileRef.current.files[0]);
+    formData.append('thumbnail', thumbnailFileRef.current.files[0]);
 
     setUploading(true);
     setError(null);
@@ -57,8 +52,8 @@ const UploadVideo = () => {
       setTitle('');
       setDescription('');
       setCategory('');
-      setVideoFile(null);
-      setThumbnailFile(null);
+      videoFileRef.current.value = null;
+      thumbnailFileRef.current.value = null;
     } catch (err) {
       setError('Error uploading video. Please try again.');
     } finally {
@@ -110,11 +105,11 @@ const UploadVideo = () => {
           </div>
           <div className="form-group">
             <label htmlFor="video">Video File</label>
-            <input type="file" id="video" accept="video/*" onChange={handleVideoFileChange} required />
+            <input type="file" id="video" accept="video/*" ref={videoFileRef} required />
           </div>
           <div className="form-group">
             <label htmlFor="thumbnail">Thumbnail File</label>
-            <input type="file" id="thumbnail" accept="image/*" onChange={handleThumbnailFileChange} required />
+            <input type="file" id="thumbnail" accept="image/*" ref={thumbnailFileRef} required />
           </div>
           <button type="submit" disabled={uploading}>
             {uploading ? 'Uploading...' : 'Upload'}
