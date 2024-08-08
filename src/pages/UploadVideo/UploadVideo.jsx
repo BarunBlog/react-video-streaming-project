@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react';
 import useAxiosPrivate from '../../hooks/useAxiosPrivate';
 import './upload-video.css';
 import Navbar from '../../components/Navbar/Navbar';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const UPLOAD_VIDEO_URL = '/stream-video/upload-video/';
 
@@ -16,6 +17,9 @@ const UploadVideo = () => {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const axiosPrivate = useAxiosPrivate();
 
@@ -55,6 +59,11 @@ const UploadVideo = () => {
       videoFileRef.current.value = null;
       thumbnailFileRef.current.value = null;
     } catch (err) {
+      // Check if the error is due to an invalid or expired refresh token
+      if (err.response?.data?.code === 'token_not_valid') {
+        navigate('/login', { state: { from: location }, replace: true });
+      }
+
       setError('Error uploading video. Please try again.');
     } finally {
       setUploading(false);
