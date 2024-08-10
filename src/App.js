@@ -8,6 +8,7 @@ import { AuthProvider } from './context/AuthProvider';
 import VideoDetails from './pages/VideoDetails/VideoDetails';
 import UploadVideo from './pages/UploadVideo/UploadVideo';
 import PrivateRoute from './components/Auth/PrivateRoute';
+import SearchVideo from './pages/SearchVideo/SearchVideo';
 
 function App() {
   return (
@@ -50,6 +51,15 @@ function App() {
             element={
               <PrivateRoute>
                 <UploadVideo />
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/search"
+            element={
+              <PrivateRoute>
+                <SearchVideo />
               </PrivateRoute>
             }
           />

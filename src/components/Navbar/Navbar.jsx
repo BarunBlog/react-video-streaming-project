@@ -1,13 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FaSearch, FaRegUserCircle } from 'react-icons/fa';
 import useLogout from '../../hooks/useLogout';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './navbar.css';
 
 const Navbar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const dropdownRef = useRef(null);
   const logout = useLogout(); // Initialize the logout function
+  const navigate = useNavigate();
 
   const handleDropdownToggle = () => {
     setDropdownOpen(!dropdownOpen);
@@ -22,6 +24,13 @@ const Navbar = () => {
   const handleLogout = e => {
     e.preventDefault(); // Prevent the default link behavior
     logout();
+  };
+
+  const handleSearch = e => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/search?title=${searchQuery}`);
+    }
   };
 
   useEffect(() => {
@@ -40,12 +49,18 @@ const Navbar = () => {
       <div className="navbar-logo">
         <Link to={`/`}>VidiZone</Link>
       </div>
-      <div className="navbar-search">
-        <input type="text" placeholder="Search" className="navbar-search-input" />
+      <form onSubmit={handleSearch} className="navbar-search">
+        <input
+          type="text"
+          placeholder="Search"
+          className="navbar-search-input"
+          value={searchQuery}
+          onChange={e => setSearchQuery(e.target.value)}
+        />
         <button className="navbar-search-button">
           <FaSearch />
         </button>
-      </div>
+      </form>
       <div className="navbar-dropdown" ref={dropdownRef}>
         <button className="navbar-dropdown-toggle" onClick={handleDropdownToggle}>
           <FaRegUserCircle />
