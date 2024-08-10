@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FaSearch, FaRegUserCircle } from 'react-icons/fa';
-
+import useLogout from '../../hooks/useLogout';
 import { Link } from 'react-router-dom';
 import './navbar.css';
 
 const Navbar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const logout = useLogout(); // Initialize the logout function
 
   const handleDropdownToggle = () => {
     setDropdownOpen(!dropdownOpen);
@@ -16,6 +17,11 @@ const Navbar = () => {
     if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
       setDropdownOpen(false);
     }
+  };
+
+  const handleLogout = e => {
+    e.preventDefault(); // Prevent the default link behavior
+    logout();
   };
 
   useEffect(() => {
@@ -50,7 +56,9 @@ const Navbar = () => {
               <Link to="/upload">Upload Video</Link>
             </li>
             <li>
-              <Link to="/logout">Logout</Link>
+              <a href="/" onClick={handleLogout}>
+                Logout
+              </a>
             </li>
           </ul>
         )}
