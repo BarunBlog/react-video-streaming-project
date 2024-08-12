@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import axios from '../../api/axios';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import moment from 'moment';
 import dashjs from 'dashjs';
 import Navbar from '../../components/Navbar/Navbar';
 import RelatedVideos from '../../components/RelatedVideos/RelatedVideos';
 import './video-details.css';
+import useAxiosPrivate from '../../hooks/useAxiosPrivate';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -17,18 +17,28 @@ const VideoDetails = () => {
   const [video, setVideo] = useState(null);
   const playerRef = React.useRef(null);
 
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const axiosPrivate = useAxiosPrivate();
+
   useEffect(() => {
     const fetchVideoDetails = async () => {
       try {
-        const response = await axios.get(`${VIDEO_DETAILS_URL}${videoUuid}`);
+        const response = await axiosPrivate.get(`${VIDEO_DETAILS_URL}${videoUuid}`);
         setVideo(response.data);
       } catch (err) {
         console.error('Error fetching video details:', err);
+
+        // Check if the error is due to an invalid or expired refresh token
+        if (err.response?.data?.code === 'token_not_valid') {
+          navigate('/login', { state: { from: location }, replace: true });
+        }
       }
     };
 
     fetchVideoDetails();
-  }, [videoUuid]);
+  }, [videoUuid, axiosPrivate, navigate, location]);
 
   useEffect(() => {
     if (video) {
