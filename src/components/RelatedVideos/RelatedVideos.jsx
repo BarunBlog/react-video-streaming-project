@@ -1,27 +1,37 @@
 import { useEffect, useState } from 'react';
-import axios from '../../api/axios';
 import './related-videos.css';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import useAxiosPrivate from '../../hooks/useAxiosPrivate';
 
 const RELATED_VIDEOS_URL = '/stream-video/get-videos/?category=';
 
 const RelatedVideos = ({ category }) => {
   const [relatedVideos, setRelatedVideos] = useState([]);
 
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const axiosPrivate = useAxiosPrivate();
+
   useEffect(() => {
     const fetchRelatedVideos = async () => {
       try {
-        const response = await axios.get(`${RELATED_VIDEOS_URL}${category}`);
+        const response = await axiosPrivate.get(`${RELATED_VIDEOS_URL}${category}`);
         setRelatedVideos(response.data.results);
       } catch (err) {
         console.error('Error fetching related videos:', err);
+
+        // Check if the error is due to an invalid or expired refresh token
+        if (err.response?.data?.code === 'token_not_valid') {
+          navigate('/login', { state: { from: location }, replace: true });
+        }
       }
     };
 
     if (category) {
       fetchRelatedVideos();
     }
-  }, [category]);
+  }, [category, axiosPrivate, navigate, location]);
 
   return (
     <div className="sidebar">
