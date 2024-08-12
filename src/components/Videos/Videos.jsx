@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import axios from '../../api/axios';
+import useAxiosPrivate from '../../hooks/useAxiosPrivate';
+import { useLocation, useNavigate } from 'react-router-dom';
 import './videos.css';
 import Video from './Video/Video';
 
@@ -8,18 +9,28 @@ const VIDEO_LIST_URL = '/stream-video/get-videos';
 const Videos = () => {
   const [videos, setVideos] = useState([]);
 
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const axiosPrivate = useAxiosPrivate();
+
   useEffect(() => {
     const fetchVideos = async () => {
       try {
-        const response = await axios.get(VIDEO_LIST_URL);
+        const response = await axiosPrivate.get(VIDEO_LIST_URL);
         setVideos(response.data.results);
       } catch (error) {
         console.error('Error fetching videos:', error);
+
+        // Check if the error is due to an invalid or expired refresh token
+        if (error.response?.data?.code === 'token_not_valid') {
+          navigate('/login', { state: { from: location }, replace: true });
+        }
       }
     };
 
     fetchVideos();
-  }, []);
+  }, [axiosPrivate, navigate, location]);
 
   return (
     <div className="home-container">
