@@ -41,18 +41,48 @@ const VideoDetails = () => {
   }, [videoUuid, axiosPrivate, navigate, location]);
 
   useEffect(() => {
-    if (video) {
-      const url = `${API_URL}${VIDEO_STREAM_URL}${videoUuid}`;
+    const streamVideo = async () => {
 
-      // Reset the player if it already exists
-      if (playerRef.current) {
-        playerRef.current.reset();
+      try {
+        // Mpd file url
+        const url = `${API_URL}${VIDEO_STREAM_URL}${videoUuid}`;
+
+        // Reset the player if it already exists
+        if (playerRef.current) {
+          playerRef.current.reset();
+        }
+
+        // Create and initialize a new Dash.js player
+        const player = dashjs.MediaPlayer().create();
+        playerRef.current = player;
+
+        const accessToken = localStorage.getItem('accessToken');
+
+        // Add authorization headers to the player's requests
+        player.extend(
+          'RequestModifier',
+          () => {
+            return {
+              modifyRequestHeader: xhr => {
+                xhr.setRequestHeader('Authorization', `Bearer ${accessToken}`);
+                return xhr;
+              },
+            };
+          },
+          true
+        );
+
+        player.initialize(document.querySelector('#videoPlayer'), url, true);
+      } catch (err) {
+        console.error('Error fetching video stream:', err);
+
+        if (err.response?.data?.code === 'token_not_valid') {
+          navigate('/login', { state: { from: location }, replace: true });
+        }
       }
-
-      // Create and initialize a new Dash.js player
-      const player = dashjs.MediaPlayer().create();
-      playerRef.current = player;
-      player.initialize(document.querySelector('#videoPlayer'), url, true);
+    };
+    if (video) {
+      streamVideo();
     }
 
     // Cleanup function to reset the player when the component unmounts or videoUuid changes
@@ -61,7 +91,7 @@ const VideoDetails = () => {
         playerRef.current.reset();
       }
     };
-  }, [video, videoUuid]);
+  }, [video, videoUuid, axiosPrivate, navigate, location]);
 
   if (!video) {
     return <div>Loading...</div>;
