@@ -6,6 +6,7 @@ import Navbar from '../../components/Navbar/Navbar';
 import RelatedVideos from '../../components/RelatedVideos/RelatedVideos';
 import './video-details.css';
 import useAxiosPrivate from '../../hooks/useAxiosPrivate';
+import { useRefreshToken } from '../../hooks/useRefreshToken';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -21,6 +22,7 @@ const VideoDetails = () => {
   const location = useLocation();
 
   const axiosPrivate = useAxiosPrivate();
+  const refresh = useRefreshToken();
 
   useEffect(() => {
     const fetchVideoDetails = async () => {
@@ -42,10 +44,10 @@ const VideoDetails = () => {
 
   useEffect(() => {
     const streamVideo = async () => {
-
       try {
         // Mpd file url
         const url = `${API_URL}${VIDEO_STREAM_URL}${videoUuid}`;
+        console.log('Stream URL:', url);
 
         // Reset the player if it already exists
         if (playerRef.current) {
@@ -56,14 +58,16 @@ const VideoDetails = () => {
         const player = dashjs.MediaPlayer().create();
         playerRef.current = player;
 
-        const accessToken = localStorage.getItem('accessToken');
-
         // Add authorization headers to the player's requests
         player.extend(
           'RequestModifier',
           () => {
             return {
               modifyRequestHeader: xhr => {
+                const accessToken = localStorage.getItem('accessToken');
+                console.log('Access Token:', accessToken);
+
+                console.log('Modifying request header');
                 xhr.setRequestHeader('Authorization', `Bearer ${accessToken}`);
                 return xhr;
               },
@@ -71,6 +75,39 @@ const VideoDetails = () => {
           },
           true
         );
+
+        let newAccessToken = null;
+        let lastPlaybackTime = 0;
+
+        // Adding error handling for the chunk files
+        player.on(dashjs.MediaPlayer.events.ERROR, async e => {
+          console.log(`Dash error found`);
+
+          if (e.error.data.response.status === 401) {
+            try {
+              // Storing the last playback time where it failed
+              lastPlaybackTime = player.time();
+
+              // Received unauthorized error from backend
+              // Attempt to refresh the access token
+              newAccessToken = await refresh();
+              console.log('New Access Token:', newAccessToken);
+
+              player.reset();
+              player.initialize(document.querySelector('#videoPlayer'), url, true);
+
+              // Delay seeking to allow the player to stabilize
+              setTimeout(() => {
+                player.seek(lastPlaybackTime);
+              }, 500);
+            } catch (err) {
+              console.error('Token refresh failed:', err);
+              navigate('/login', { state: { from: location }, replace: true });
+            }
+          } else {
+            console.error('Streaming error:', e.error);
+          }
+        });
 
         player.initialize(document.querySelector('#videoPlayer'), url, true);
       } catch (err) {
@@ -81,6 +118,7 @@ const VideoDetails = () => {
         }
       }
     };
+
     if (video) {
       streamVideo();
     }
@@ -91,7 +129,7 @@ const VideoDetails = () => {
         playerRef.current.reset();
       }
     };
-  }, [video, videoUuid, axiosPrivate, navigate, location]);
+  }, [video, videoUuid, axiosPrivate, navigate, location, refresh]);
 
   if (!video) {
     return <div>Loading...</div>;
