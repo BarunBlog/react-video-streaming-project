@@ -1,0 +1,85 @@
+.upload-video-container {
+  max-width: 650px;
+  height: auto;
+  margin: 0 auto;
+  margin-top: 30px;
+  padding: 20px;
+  background: var(--color-white);
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  color: var(--color-primary);
+}
+
+.upload-video-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: var(--color-primary);
+}
+
+.form-group {
+  margin-bottom: 15px;
+  color: var(--color-primary);
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: var(--color-primary);
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  color: var(--color-primary);
+}
+
+::placeholder {
+  color: #5a6068;
+}
+
+.form-group option {
+  color: var(--color-primary);
+}
+
+.form-group textarea {
+  resize: vertical;
+}
+
+button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+button:hover:enabled {
+  background: #0056b3;
+}
+
+.error-message {
+  color: #d9534f;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.success-message {
+  color: #5cb85c;
+  text-align: center;
+  margin-top: 20px;
+}
