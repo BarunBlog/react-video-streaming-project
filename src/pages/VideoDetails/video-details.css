@@ -42,3 +42,8 @@ video {
   font-size: 1rem;
   margin: 5px 0;
 }
+
+.video-details-description {
+  line-height: 2;
+  margin-bottom: 20px;
+}
