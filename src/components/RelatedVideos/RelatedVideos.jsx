@@ -3,9 +3,9 @@ import './related-videos.css';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import useAxiosPrivate from '../../hooks/useAxiosPrivate';
 
-const RELATED_VIDEOS_URL = '/stream-video/get-videos/?category=';
+let RELATED_VIDEOS_URL = '/stream-video/get-videos/?';
 
-const RelatedVideos = ({ category }) => {
+const RelatedVideos = ({ category, exceptVideoUuid }) => {
   const [relatedVideos, setRelatedVideos] = useState([]);
 
   const navigate = useNavigate();
@@ -13,10 +13,18 @@ const RelatedVideos = ({ category }) => {
 
   const axiosPrivate = useAxiosPrivate();
 
+  if (category) {
+    RELATED_VIDEOS_URL += `&category=${category}`;
+  }
+
+  if (exceptVideoUuid) {
+    RELATED_VIDEOS_URL += `&except_video_uuid=${exceptVideoUuid}`;
+  }
+
   useEffect(() => {
     const fetchRelatedVideos = async () => {
       try {
-        const response = await axiosPrivate.get(`${RELATED_VIDEOS_URL}${category}`);
+        const response = await axiosPrivate.get(RELATED_VIDEOS_URL);
         setRelatedVideos(response.data.results);
       } catch (err) {
         console.error('Error fetching related videos:', err);

@@ -66,7 +66,7 @@ const VideoDetails = () => {
           </div>
         </div>
 
-        <RelatedVideos category={video.category} />
+        <RelatedVideos category={video.category} exceptVideoUuid={videoUuid} />
       </div>
     </>
   );
