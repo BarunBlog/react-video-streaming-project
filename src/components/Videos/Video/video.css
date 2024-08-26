@@ -48,6 +48,9 @@
   font-size: 1rem;
   font-weight: 700;
   margin: 1px 0;
+  white-space: nowrap;         /* Prevents the text from wrapping to the next line */
+  overflow: hidden;           /* Hides the overflowing text */
+  text-overflow: ellipsis;    /* Adds an ellipsis (...) at the end of the truncated text */
 }
 
 .video-author-info {
@@ -66,4 +69,7 @@
   font-size: 0.9rem;
   color: var(--color-bg);
   font-weight: 400;
+  white-space: nowrap;         /* Prevents the text from wrapping to the next line */
+  overflow: hidden;           /* Hides the overflowing text */
+  text-overflow: ellipsis;
 }

@@ -60,7 +60,7 @@ const Login = () => {
   };
 
   return (
-    <section>
+    <section className='auth-section'>
       <div className="auth-background">
         <div className="shape"></div>
         <div className="shape"></div>

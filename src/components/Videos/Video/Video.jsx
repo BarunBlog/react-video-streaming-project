@@ -18,7 +18,7 @@ const Video = ({ uuid, title, thumbnail, author_name, created_at }) => {
           <p className="video-title">{title}</p>
 
           <div className="video-author-info">
-            <p className="video-author">Uploaded By {author_name}</p>
+            <p className="video-author">{author_name}</p>
             <p className="video-time">{moment(created_at).fromNow()}</p>
           </div>
         </div>
