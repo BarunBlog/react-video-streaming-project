@@ -47,3 +47,10 @@ video {
   line-height: 2;
   margin-bottom: 20px;
 }
+
+/* ======================== MEDIA QUERIES (MEDIUM DEVICES) ========================= */
+@media screen and (max-width: 1200px) {
+  .video-details-container {
+    flex-direction: column;
+  }
+}

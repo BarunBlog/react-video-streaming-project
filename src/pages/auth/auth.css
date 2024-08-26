@@ -1,4 +1,4 @@
-section {
+.auth-section {
   height: 100vh;
   background: var(--color-primary);
 }
