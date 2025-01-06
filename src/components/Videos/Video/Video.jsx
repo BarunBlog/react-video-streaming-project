@@ -4,12 +4,15 @@ import { FaPlayCircle } from 'react-icons/fa';
 import './video.css';
 import { Link } from 'react-router-dom';
 
-const Video = ({ uuid, title, thumbnail, author_name, created_at }) => {
+const Video = ({ uuid, title, thumbnail, author_name, created_at, lastPlayedSecond, duration }) => {
+  const progressPercentage = Math.min((lastPlayedSecond / duration) * 100, 100);
+
   return (
     <Link to={`/videos/${uuid}`} className="video-link">
       <div key={uuid} className="video-card">
         <div className="thumbnail-container">
           <img src={thumbnail} alt={title} className="video-thumbnail" />
+          <div className="progress-bar" style={{ width: `${progressPercentage}%` }}></div>
           <div className="play-button">
             <FaPlayCircle />
           </div>

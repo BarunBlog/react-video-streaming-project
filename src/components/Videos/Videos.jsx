@@ -43,6 +43,8 @@ const Videos = () => {
             thumbnail={video.thumbnail}
             author_name={video.author_name}
             created_at={video.created_at}
+            lastPlayedSecond={video.last_streamed_second || 0} // Add last played second
+            duration={video.duration || 1} // Ensure duration is not zero to avoid division errors
           />
         ))}
       </div>
