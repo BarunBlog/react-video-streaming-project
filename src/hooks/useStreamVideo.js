@@ -15,6 +15,9 @@ const useStreamVideo = (video, videoUuid, refresh) => {
       try {
         // Mpd file url
         const url = `${API_URL}${VIDEO_STREAM_URL}${videoUuid}`;
+        const videoElement = document.querySelector('#videoPlayer');
+        let previousTime = 0;
+
         console.log('Stream URL:', url);
 
         // Reset the player if it already exists
@@ -39,6 +42,26 @@ const useStreamVideo = (video, videoUuid, refresh) => {
                 xhr.setRequestHeader('Authorization', `Bearer ${accessToken}`);
                 return xhr;
               },
+              modifyRequestURL: url => {
+                let modifiedUrl = url;
+                let currentTime = Math.floor(videoElement.currentTime);
+
+                if (currentTime === previousTime) {
+                  return modifiedUrl;
+                }
+
+                if (currentTime > 0) {
+                  console.log(`current time: ${currentTime}`);
+                  previousTime = currentTime;
+
+                  // Append the playback time as a query parameter
+                  modifiedUrl = `${url}?playbackTime=${currentTime}`;
+                }
+
+                console.log(`modified url: ${modifiedUrl}`);
+
+                return modifiedUrl;
+              },
             };
           },
           true
@@ -60,7 +83,7 @@ const useStreamVideo = (video, videoUuid, refresh) => {
               await refresh();
 
               player.reset();
-              player.initialize(document.querySelector('#videoPlayer'), url, true);
+              player.initialize(videoElement, url, true);
 
               // Delay seeking to allow the player to stabilize
               setTimeout(() => {
@@ -75,7 +98,7 @@ const useStreamVideo = (video, videoUuid, refresh) => {
           }
         });
 
-        player.initialize(document.querySelector('#videoPlayer'), url, true);
+        player.initialize(videoElement, url, true);
       } catch (err) {
         console.error('Error fetching video stream:', err);
 
