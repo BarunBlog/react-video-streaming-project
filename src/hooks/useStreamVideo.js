@@ -14,7 +14,7 @@ const useStreamVideo = (video, videoUuid, refresh) => {
     const streamVideo = async () => {
       try {
         // Mpd file url
-        const url = `${API_URL}${VIDEO_STREAM_URL}${videoUuid}`;
+        const url = `${API_URL}${VIDEO_STREAM_URL}${videoUuid}#t=${video.last_streamed_second}`;
         const videoElement = document.querySelector('#videoPlayer');
         let previousTime = 0;
 
