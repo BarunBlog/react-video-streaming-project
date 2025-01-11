@@ -1,8 +1,9 @@
 import dashjs from 'dashjs';
 import { useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+// import { axiosPrivate } from '../api/axios';
 
-const useStreamVideo = (video, videoUuid, refresh) => {
+const useStreamVideo = (video, presignedUrls, videoUuid, refresh) => {
   const playerRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
@@ -16,7 +17,6 @@ const useStreamVideo = (video, videoUuid, refresh) => {
         // Mpd file url
         const url = `${API_URL}${VIDEO_STREAM_URL}${videoUuid}#t=${video.last_streamed_second}`;
         const videoElement = document.querySelector('#videoPlayer');
-        let previousTime = 0;
 
         console.log('Stream URL:', url);
 
@@ -34,33 +34,14 @@ const useStreamVideo = (video, videoUuid, refresh) => {
           'RequestModifier',
           () => {
             return {
-              modifyRequestHeader: xhr => {
-                const accessToken = localStorage.getItem('accessToken');
-                console.log('Access Token:', accessToken);
-
-                console.log('Modifying request header');
-                xhr.setRequestHeader('Authorization', `Bearer ${accessToken}`);
-                return xhr;
-              },
               modifyRequestURL: url => {
-                let modifiedUrl = url;
-                let currentTime = Math.floor(videoElement.currentTime);
-
-                if (currentTime === previousTime) {
-                  return modifiedUrl;
+                const fileName = url.replace(/\/$/, '').split('/').pop();
+                if (fileName.includes('#t=')) {
+                  // Which means that this url is of mpd file
+                  return url;
                 }
 
-                if (currentTime > 0) {
-                  console.log(`current time: ${currentTime}`);
-                  previousTime = currentTime;
-
-                  // Append the playback time as a query parameter
-                  modifiedUrl = `${url}?playbackTime=${currentTime}`;
-                }
-
-                console.log(`modified url: ${modifiedUrl}`);
-
-                return modifiedUrl;
+                return presignedUrls[fileName];
               },
             };
           },
@@ -117,7 +98,7 @@ const useStreamVideo = (video, videoUuid, refresh) => {
         playerRef.current.reset();
       }
     };
-  }, [video, videoUuid, API_URL, location, navigate, refresh]);
+  }, [video, videoUuid, API_URL, location, navigate, refresh, presignedUrls]);
 };
 
 export default useStreamVideo;
