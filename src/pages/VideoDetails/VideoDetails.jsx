@@ -39,8 +39,6 @@ const VideoDetails = () => {
   }, [videoUuid, axiosPrivate, navigate, location]);
 
   // Streaming the video
-  console.log(video);
-
   useStreamVideo(video, videoUuid, refresh);
 
   if (!video) {

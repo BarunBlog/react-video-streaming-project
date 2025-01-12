@@ -1,24 +1,38 @@
 import dashjs from 'dashjs';
 import { useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { axiosPrivate } from '../api/axios';
 // import { axiosPrivate } from '../api/axios';
 
 const useStreamVideo = (video, videoUuid, refresh) => {
   const playerRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
+  const updateTimeInterval = 10;
 
   const VIDEO_STREAM_URL = '/stream-video/stream/';
+  const UPDATE_STREAMING_TIME_URL = `stream-video/stream/${videoUuid}/update-last-streamed-point/`;
   const API_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
+    const updateStreamingTime = async lastPlayedTime => {
+      try {
+        await axiosPrivate.post(UPDATE_STREAMING_TIME_URL, { last_played_second: lastPlayedTime });
+      } catch (err) {
+        console.error('Error updating streaming time:', err);
+
+        // Check if the error is due to an invalid or expired refresh token
+        if (err.response?.data?.code === 'token_not_valid') {
+          navigate('/login', { state: { from: location }, replace: true });
+        }
+      }
+    };
+
     const streamVideo = async () => {
       try {
         // Mpd file url
         const url = `${API_URL}${VIDEO_STREAM_URL}${videoUuid}#t=${video.last_streamed_second}`;
         const videoElement = document.querySelector('#videoPlayer');
-
-        console.log('Stream URL:', url);
 
         // Reset the player if it already exists
         if (playerRef.current) {
@@ -79,6 +93,18 @@ const useStreamVideo = (video, videoUuid, refresh) => {
           }
         });
 
+        let previousTime = 0;
+
+        player.on(dashjs.MediaPlayer.events.PLAYBACK_PROGRESS, async e => {
+          let currentTime = Math.floor(videoElement.currentTime);
+
+          // Updating streaming time for the user after a certain time interval
+          if (currentTime - previousTime > updateTimeInterval) {
+            updateStreamingTime(currentTime);
+            previousTime = currentTime;
+          }
+        });
+
         player.initialize(videoElement, url, true);
       } catch (err) {
         console.error('Error fetching video stream:', err);
@@ -98,7 +124,7 @@ const useStreamVideo = (video, videoUuid, refresh) => {
         playerRef.current.reset();
       }
     };
-  }, [video, videoUuid, API_URL, location, navigate, refresh]);
+  }, [video, videoUuid, API_URL, location, navigate, refresh, UPDATE_STREAMING_TIME_URL]);
 };
 
 export default useStreamVideo;
