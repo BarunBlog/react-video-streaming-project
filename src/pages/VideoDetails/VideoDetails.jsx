@@ -9,12 +9,10 @@ import { useRefreshToken } from '../../hooks/useRefreshToken';
 import useStreamVideo from '../../hooks/useStreamVideo';
 
 const VIDEO_DETAILS_URL = '/stream-video/get-videos/';
-const PRESIGNED_URLS_URL = 'stream-video/presigned-urls/';
 
 const VideoDetails = () => {
   const { videoUuid } = useParams();
   const [video, setVideo] = useState(null);
-  const [presignedUrls, setPresignedUrls] = useState([]);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -37,26 +35,13 @@ const VideoDetails = () => {
       }
     };
 
-    const fetchPresignedUrls = async () => {
-      try {
-        const response = await axiosPrivate.get(`${PRESIGNED_URLS_URL}${videoUuid}`);
-        setPresignedUrls(response.data);
-      } catch (err) {
-        console.error('Error fetching presigned urls:', err);
-
-        // Check if the error is due to an invalid or expired refresh token
-        if (err.response?.data?.code === 'token_not_valid') {
-          navigate('/login', { state: { from: location }, replace: true });
-        }
-      }
-    };
-
     fetchVideoDetails();
-    fetchPresignedUrls();
   }, [videoUuid, axiosPrivate, navigate, location]);
 
   // Streaming the video
-  useStreamVideo(video, presignedUrls, videoUuid, refresh);
+  console.log(video);
+
+  useStreamVideo(video, videoUuid, refresh);
 
   if (!video) {
     return <div>Loading...</div>;

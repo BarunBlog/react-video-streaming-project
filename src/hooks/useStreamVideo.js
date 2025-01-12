@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 // import { axiosPrivate } from '../api/axios';
 
-const useStreamVideo = (video, presignedUrls, videoUuid, refresh) => {
+const useStreamVideo = (video, videoUuid, refresh) => {
   const playerRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
@@ -41,7 +41,7 @@ const useStreamVideo = (video, presignedUrls, videoUuid, refresh) => {
                   return url;
                 }
 
-                return presignedUrls[fileName];
+                return video.presigned_urls[fileName];
               },
             };
           },
@@ -98,7 +98,7 @@ const useStreamVideo = (video, presignedUrls, videoUuid, refresh) => {
         playerRef.current.reset();
       }
     };
-  }, [video, videoUuid, API_URL, location, navigate, refresh, presignedUrls]);
+  }, [video, videoUuid, API_URL, location, navigate, refresh]);
 };
 
 export default useStreamVideo;
