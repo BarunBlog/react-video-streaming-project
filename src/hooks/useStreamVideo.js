@@ -55,7 +55,11 @@ const useStreamVideo = (video, videoUuid, refresh) => {
                   return url;
                 }
 
-                return video.presigned_urls[fileName];
+                if (video.presigned_urls[fileName].is_cached === true) {
+                  return url;
+                }
+
+                return video.presigned_urls[fileName].url;
               },
             };
           },
