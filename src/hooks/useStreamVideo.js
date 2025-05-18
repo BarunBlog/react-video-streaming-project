@@ -4,14 +4,17 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { axiosPrivate } from '../api/axios';
 // import { axiosPrivate } from '../api/axios';
 
+let segmentFileNames = new Set();
+const TIME_INTERVAL = 10;
+
 const useStreamVideo = (video, videoUuid, refresh) => {
   const playerRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
-  const updateTimeInterval = 10;
 
   const VIDEO_STREAM_URL = '/stream-video/stream/';
   const UPDATE_STREAMING_TIME_URL = `stream-video/stream/${videoUuid}/update-last-streamed-point/`;
+  const SAVE_SEGMENT_ACTIVITY_URL = `stream-video/stream/${videoUuid}/save-segment-activity/`;
   const API_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
@@ -20,6 +23,19 @@ const useStreamVideo = (video, videoUuid, refresh) => {
         await axiosPrivate.post(UPDATE_STREAMING_TIME_URL, { last_played_second: lastPlayedTime });
       } catch (err) {
         console.error('Error updating streaming time:', err);
+
+        // Check if the error is due to an invalid or expired refresh token
+        if (err.response?.data?.code === 'token_not_valid') {
+          navigate('/login', { state: { from: location }, replace: true });
+        }
+      }
+    };
+
+    const saveSegmentActivity = async () => {
+      try {
+        await axiosPrivate.post(SAVE_SEGMENT_ACTIVITY_URL, { segments: Array.from(segmentFileNames) });
+      } catch (err) {
+        console.log('Error saving segment activity:', err);
 
         // Check if the error is due to an invalid or expired refresh token
         if (err.response?.data?.code === 'token_not_valid') {
@@ -43,23 +59,51 @@ const useStreamVideo = (video, videoUuid, refresh) => {
         const player = dashjs.MediaPlayer().create();
         playerRef.current = player;
 
+        let lastRequestedURL = null;
+
         // Add authorization headers to the player's requests
         player.extend(
           'RequestModifier',
           () => {
             return {
+              modifyRequestHeader: xhr => {
+
+                const accessToken = localStorage.getItem('accessToken');
+
+                if (lastRequestedURL && lastRequestedURL.includes('/api/')) {
+                  if (accessToken) {
+                    xhr.setRequestHeader('Authorization', `Bearer ${accessToken}`);
+                  }
+                }
+
+                return xhr;
+              },
               modifyRequestURL: url => {
+                lastRequestedURL = url;
+
                 const fileName = url.replace(/\/$/, '').split('/').pop();
                 if (fileName.includes('#t=')) {
                   // Which means that this url is of mpd file
                   return url;
                 }
 
-                if (video.presigned_urls[fileName].is_cached === true) {
+                if (
+                  video.presigned_urls &&
+                  video.presigned_urls[fileName] &&
+                  video.presigned_urls[fileName]['is_cached'] === true
+                ) {
                   return url;
                 }
 
-                return video.presigned_urls[fileName].url;
+                segmentFileNames.add(fileName);
+
+                if (video.presigned_urls && video.presigned_urls[fileName] && video.presigned_urls[fileName]['url']) {
+                  lastRequestedURL = video.presigned_urls[fileName]['url'];
+                  return video.presigned_urls[fileName]['url'];
+                } else {
+                  console.warn(`Segment ${fileName} not found in presigned URLs`);
+                  return null; // or handle it gracefully, maybe return a placeholder URL
+                }
               },
             };
           },
@@ -99,12 +143,19 @@ const useStreamVideo = (video, videoUuid, refresh) => {
 
         let previousTime = 0;
 
-        player.on(dashjs.MediaPlayer.events.PLAYBACK_PROGRESS, async e => {
+        player.on(dashjs.MediaPlayer.events.PLAYBACK_TIME_UPDATED, async e => {
           let currentTime = Math.floor(videoElement.currentTime);
 
-          // Updating streaming time for the user after a certain time interval
-          if (currentTime - previousTime > updateTimeInterval) {
+          if (currentTime - previousTime > TIME_INTERVAL) {
+            // Updating streaming time for the user after a certain time interval
             updateStreamingTime(currentTime);
+
+            // Saving segment activity for the user after a certain time interval
+            if (segmentFileNames.size > 0) {
+              saveSegmentActivity();
+              segmentFileNames.clear();
+            }
+
             previousTime = currentTime;
           }
         });
@@ -128,7 +179,7 @@ const useStreamVideo = (video, videoUuid, refresh) => {
         playerRef.current.reset();
       }
     };
-  }, [video, videoUuid, API_URL, location, navigate, refresh, UPDATE_STREAMING_TIME_URL]);
+  }, [video, videoUuid, API_URL, location, navigate, refresh, UPDATE_STREAMING_TIME_URL, SAVE_SEGMENT_ACTIVITY_URL]);
 };
 
 export default useStreamVideo;
